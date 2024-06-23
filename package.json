@@ -30,8 +30,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "storybook dev -p 6006 -s public",
-    "build-storybook": "storybook build -s public"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": [
@@ -68,11 +68,12 @@
     "@storybook/addon-interactions": "^7.6.4",
     "@storybook/addon-links": "^7.6.4",
     "@storybook/node-logger": "^7.6.4",
-    "@storybook/preset-create-react-app": "^7.6.4",
+    "@storybook/preset-create-react-app": "^8.1.10",
     "@storybook/react": "^7.6.4",
     "@storybook/react-webpack5": "^7.6.4",
     "@storybook/test": "^7.6.4",
     "storybook": "^7.6.4",
+    "ts-loader": "^9.5.1",
     "webpack": "^5.71.0"
   }
 }

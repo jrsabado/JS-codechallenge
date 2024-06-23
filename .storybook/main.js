@@ -6,7 +6,8 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
-    '@chromatic-com/storybook'
+    '@chromatic-com/storybook',
+    '@storybook/preset-create-react-app',
   ],
 
   framework: {
