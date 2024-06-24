@@ -1,8 +1,12 @@
-import React, { useRef } from "react";
-import Modal from "react-modal";
-import CountrySelect, { DEFAULT_COUNTRY } from "../country/CountrySelect";
-import LanguageSelect, { DEFAULT_LANGUAGE } from "../language/LanguageSelect";
-import CurrencySelect, { DEFAULT_CURRENCY } from "../currency/CurrencySelect";
+import React, { useState, useCallback, useMemo } from 'react';
+import Modal from 'react-modal';
+import CountrySelect from '../country/CountrySelect';
+import LanguageSelect from '../language/LanguageSelect';
+import CurrencySelect from '../currency/CurrencySelect';
+import { Country, Language, Currency, Settings, DEFAULT_SETTINGS } from './settingsContext';
+import SettingsButton from './SettingsButton';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /* --- [TASK] ---
 Changes on modal are only applied on SAVE
@@ -94,63 +98,143 @@ FURTHER DETAILS
 --- [TASK] --- */
 
 // Component
+// const SettingsSelector = (): JSX.Element => {
+//   // States
+//   const [modalIsOpen, setModalIsOpen] = React.useState<any>(false);
+//   const [selectedCountry, setCountry] = React.useState<any>(DEFAULT_COUNTRY);
+//   const [selectedCurrency, setCurrency] = React.useState<any>(DEFAULT_CURRENCY);
+//   const [selectedLanguage, setLanguage] = React.useState<any>(DEFAULT_LANGUAGE);
+
+//   // Render Counter
+//   const counter = useRef(0);
+
+//   // Actions
+//   const handleOpen = () => {
+//     setModalIsOpen(true);
+//   };
+//   const handleClose = () => {
+//     setModalIsOpen(false);
+//   };
+
+//   const button = () => {
+//     // Increase render count.
+//     counter.current++;
+
+//     // Log current render count.
+//     console.log("Render count of button is: " + counter.current);
+
+//     /* Button */
+//     return (
+//       <button onClick={handleOpen}>
+//         {selectedCountry.name} - ({selectedCurrency} - {selectedLanguage})
+//       </button>
+//     );
+//   };
+
+//   // Render
+//   return (
+//     <div>
+//       {button()}
+
+//       {/* Modal */}
+//       <Modal isOpen={modalIsOpen}>
+//         {/* Header */}
+//         <h2>Select your region, currency and language.</h2>
+
+//         {/* Country */}
+//         <CountrySelect value={selectedCountry} onChange={setCountry} />
+
+//         {/* Currency */}
+//         <CurrencySelect value={selectedCurrency} onChange={setCurrency} />
+
+//         {/* Language */}
+//         <LanguageSelect language={selectedLanguage} onChange={setLanguage} />
+
+//         {/* Close button */}
+//         <button onClick={handleClose}>Close</button>
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default SettingsSelector;
+
+
+// Component
 const SettingsSelector = (): JSX.Element => {
-  // States
-  const [modalIsOpen, setModalIsOpen] = React.useState<any>(false);
-  const [selectedCountry, setCountry] = React.useState<any>(DEFAULT_COUNTRY);
-  const [selectedCurrency, setCurrency] = React.useState<any>(DEFAULT_CURRENCY);
-  const [selectedLanguage, setLanguage] = React.useState<any>(DEFAULT_LANGUAGE);
-
-  // Render Counter
-  const counter = useRef(0);
-
-  // Actions
-  const handleOpen = () => {
-    setModalIsOpen(true);
-  };
-  const handleClose = () => {
-    setModalIsOpen(false);
-  };
-
-  const button = () => {
-    // Increase render count.
-    counter.current++;
-
-    // Log current render count.
-    console.log("Render count of button is: " + counter.current);
-
-    /* Button */
+    // States
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+    const [tempSettings, setTempSettings] = useState<Settings>(settings);
+  
+    // Memoized button label to prevent unnecessary re-renders
+    const buttonLabel = useMemo(() => {
+      return `${settings.country.name} - (${settings.currency.code} - ${settings.language.name})`;
+    }, [settings.country.name, settings.currency.code, settings.language.name]);
+  
+    // Actions
+    const handleOpen = useCallback(() => {
+      setTempSettings(settings);
+      setModalIsOpen(true);
+    }, [settings]);
+  
+    const handleClose = useCallback(() => {
+      setModalIsOpen(false);
+    }, []);
+  
+    const handleSave = useCallback(() => {
+      setSettings(tempSettings);
+      setModalIsOpen(false);
+      toast.success('Changes have been saved!', { autoClose: 1500 });
+    }, [tempSettings]);
+  
+    const handleChangeCountry = useCallback((country: Country) => {
+      setTempSettings((prev) => ({ ...prev, country }));
+    }, []);
+  
+    const handleChangeLanguage = useCallback((language: Language) => {
+      setTempSettings((prev) => ({ ...prev, language }));
+    }, []);
+  
+    const handleChangeCurrency = useCallback((currency: Currency) => {
+      setTempSettings((prev) => ({ ...prev, currency }));
+    }, []);
+  
+    // Render
     return (
-      <button onClick={handleOpen}>
-        {selectedCountry.name} - ({selectedCurrency} - {selectedLanguage})
-      </button>
+      <div>
+        <SettingsButton onClick={handleOpen} label={buttonLabel} />
+  
+        {/* Modal */}
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={handleClose}
+          className="react-modal-content"
+          overlayClassName="react-modal-overlay"
+        >
+          {/* Header */}
+          <h2>Select your region, currency, and language.</h2>
+  
+          {/* Country */}
+          <CountrySelect value={tempSettings.country} onChange={handleChangeCountry} />
+  
+          {/* Currency */}
+          <CurrencySelect value={tempSettings.currency} onChange={handleChangeCurrency} />
+  
+          {/* Language */}
+          <LanguageSelect value={tempSettings.language} onChange={handleChangeLanguage} />
+  
+          {/* Buttons */}
+          <div className="modal-buttons">
+            <button onClick={handleClose}>Cancel</button>
+            <button onClick={handleSave}>Save</button>
+          </div>
+        </Modal>
+  
+        {/* Toast Container */}
+        <ToastContainer />
+      </div>
     );
   };
-
-  // Render
-  return (
-    <div>
-      {button()}
-
-      {/* Modal */}
-      <Modal isOpen={modalIsOpen}>
-        {/* Header */}
-        <h2>Select your region, currency and language.</h2>
-
-        {/* Country */}
-        <CountrySelect value={selectedCountry} onChange={setCountry} />
-
-        {/* Currency */}
-        <CurrencySelect value={selectedCurrency} onChange={setCurrency} />
-
-        {/* Language */}
-        <LanguageSelect language={selectedLanguage} onChange={setLanguage} />
-
-        {/* Close button */}
-        <button onClick={handleClose}>Close</button>
-      </Modal>
-    </div>
-  );
-};
-
-export default SettingsSelector;
+  
+  export default SettingsSelector;

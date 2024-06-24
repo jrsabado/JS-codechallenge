@@ -1,53 +1,51 @@
-import countries from "i18n-iso-countries";
-import Select from "react-select";
-import { CountrySelectOption } from "./CountrySelectOption";
+import React from 'react';
+import countries from 'i18n-iso-countries';
+import Select, { SingleValue, ActionMeta } from 'react-select';
+import { CountrySelectOption, CountrySelectSingleValue } from './CountrySelectOption';
+import { Country } from '../settings/settingsContext';
 
 // Register countries
-countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+countries.registerLocale(require('i18n-iso-countries/langs/en.json'));
 
-// --- TASK G ---
-// Please replace "any" with a proper type in this file (and where it is needed).
-
-// Props
-interface CountrySelectProps {
-  value?: any;
-  onChange?: (value: any) => void;
+interface CountryOption {
+  value: Country;
+  label: string;
 }
 
-// Constants
-export const DEFAULT_COUNTRY = {
-  code: "US",
-  name: "United States of America",
-};
+interface CountrySelectProps {
+  value?: Country;
+  onChange?: (value: Country) => void;
+}
 
-// Component
-export const CountrySelect = ({
-  value = DEFAULT_COUNTRY,
-  onChange,
-}: CountrySelectProps) => {
-  // Prepare Data
-  const data = Object.entries(
-    countries.getNames("en", { select: "official" })
-  ).map(([code, name]) => {
-    return {
-      value: { code, name },
-      label: name,
-    };
-  });
-  const defaultValue = { value: value, label: value.name };
+const CountrySelect = ({ value, onChange }: CountrySelectProps) => {
+  const options = Object.entries(countries.getNames('en', { select: 'official' })).map(([code, name]) => ({
+    value: { code, name },
+    label: name,
+  }));
 
-  // Render
+  const defaultValue = value ? { value, label: value.name } : null;
+
+  const handleChange = (
+    newValue: SingleValue<CountryOption>,
+    _actionMeta: ActionMeta<CountryOption>
+  ) => {
+    if (newValue) {
+      onChange?.(newValue.value);
+    }
+  };
+
   return (
     <div>
       <label>
         Country
         <Select
-          options={data}
-          components={{ Option: CountrySelectOption }}
-          defaultValue={defaultValue}
-          onChange={(newValue) => {
-            onChange(newValue.value);
+          options={options}
+          components={{
+            Option: CountrySelectOption,
+            SingleValue: CountrySelectSingleValue,
           }}
+          defaultValue={defaultValue}
+          onChange={(newValue, actionMeta) => handleChange(newValue as SingleValue<CountryOption>, actionMeta)}
         />
       </label>
     </div>

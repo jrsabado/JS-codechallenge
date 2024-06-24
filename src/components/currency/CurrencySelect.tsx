@@ -1,40 +1,44 @@
-import CurrencyData from "currency-codes/data";
-import Select from "react-select";
+import React from 'react';
+import CurrencyData from 'currency-codes/data';
+import Select, { SingleValue, ActionMeta } from 'react-select';
+import { Currency, DEFAULT_CURRENCY } from '../settings/settingsContext';
 
-// Props
-interface CurrencySelectProps {
-  value?: string;
-  onChange?: (currency: string) => void;
+interface CurrencyOption {
+  value: Currency;
+  label: string;
 }
 
-// Constants
-export const DEFAULT_CURRENCY = "USD - US Dollar";
+interface CurrencySelectProps {
+  value?: Currency;
+  onChange?: (currency: Currency) => void;
+}
 
-// Component
-const CurrencySelect = ({
-  value = DEFAULT_CURRENCY,
-  onChange,
-}: CurrencySelectProps) => {
+const CurrencySelect = ({ value = DEFAULT_CURRENCY, onChange }: CurrencySelectProps) => {
   // Prepare data
-  const data = CurrencyData.map(({ code, currency }) => {
-    return {
-      value: code + " - " + currency,
-      label: code + " - " + currency,
-    };
-  });
-  const defaultValue = { value: value, label: value };
+  const options = CurrencyData.map(({ code, currency }: { code: string; currency: string }) => ({
+    value: { code, name: currency },
+    label: `${code} - ${currency}`,
+  }));
 
-  // Render
+  const defaultValue = value ? { value, label: `${value.code} - ${value.name}` } : null;
+
+  const handleChange = (
+    newValue: SingleValue<CurrencyOption>,
+    _actionMeta: ActionMeta<CurrencyOption>
+  ) => {
+    if (newValue) {
+      onChange?.(newValue.value);
+    }
+  };
+
   return (
     <div>
       <label>
         Currency
         <Select
-          options={data}
+          options={options}
           defaultValue={defaultValue}
-          onChange={(newValue) => {
-            onChange(newValue.value);
-          }}
+          onChange={(newValue, actionMeta) => handleChange(newValue as SingleValue<CurrencyOption>, actionMeta)}
         />
       </label>
     </div>
