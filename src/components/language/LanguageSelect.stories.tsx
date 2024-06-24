@@ -3,13 +3,11 @@ import LanguageSelect from "./LanguageSelect";
 import { Language } from '../settings/settingsContext';
 import '../../../src/styles.css';
 
-// Define the type for LanguageSelect props
 interface LanguageSelectProps {
   value?: Language;
   onChange?: (language: Language) => void;
 }
 
-// Settings
 export default {
   title: "Input/LanguageSelect",
   component: LanguageSelect,

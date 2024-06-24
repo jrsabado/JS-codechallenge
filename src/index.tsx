@@ -4,7 +4,7 @@ import App from './App';
 import './styles.css';
 
 const container = document.getElementById('root');
-const root = createRoot(container!); // Ensure the container is not null
+const root = createRoot(container!); 
 root.render(
   <React.StrictMode>
     <App />

@@ -24,7 +24,6 @@ const languageData = [
   { code: 'it', name: 'Italian' },
   { code: 'pt', name: 'Portuguese' },
   { code: 'hi', name: 'Hindi' },
-  // Add more languages as needed
 ];
 
 const LanguageSelect = ({ value = DEFAULT_LANGUAGE, onChange }: LanguageSelectProps) => {

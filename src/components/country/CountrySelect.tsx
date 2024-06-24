@@ -4,7 +4,6 @@ import Select, { SingleValue, ActionMeta } from 'react-select';
 import { CountrySelectOption, CountrySelectSingleValue } from './CountrySelectOption';
 import { Country } from '../settings/settingsContext';
 
-// Register countries
 countries.registerLocale(require('i18n-iso-countries/langs/en.json'));
 
 interface CountryOption {
